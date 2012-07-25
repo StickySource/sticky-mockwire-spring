@@ -16,7 +16,9 @@ import java.beans.Introspector;
 import java.util.List;
 import java.util.Map;
 
-import net.stickycode.configured.ConfigurationSource;
+import net.stickycode.bootstrap.StickyBootstrap;
+import net.stickycode.bootstrap.spring3.StickySpringBootstrap;
+import net.stickycode.configuration.ConfigurationSource;
 import net.stickycode.configured.ConfigurationSystem;
 import net.stickycode.configured.spring30.ConfigurationRefresher;
 import net.stickycode.exception.PermanentException;
@@ -128,22 +130,13 @@ public class SpringIsolatedTestManifest
   @Override
   public void scanPackages(String[] scanRoots) {
     log.debug("scanning roots {}", scanRoots);
-    ClassPathBeanDefinitionScanner scanner = createScanner();
+    StickySpringBootstrap bootstrap = new StickySpringBootstrap(context);
     XmlBeanDefinitionReader beanDefinitionReader = createXmlLoader();
     for (String s : scanRoots)
       if (s.endsWith(".xml"))
         beanDefinitionReader.loadBeanDefinitions(s);
       else
-        scanner.scan(scanRoots);
-  }
-
-  private ClassPathBeanDefinitionScanner createScanner() {
-    ClassPathBeanDefinitionScanner scanner = new ClassPathBeanDefinitionScanner(context);
-    scanner.setIncludeAnnotationConfig(true);
-    scanner.addIncludeFilter(new AnnotationTypeFilter(StickyComponent.class));
-    scanner.addIncludeFilter(new AnnotationTypeFilter(StickyPlugin.class));
-    scanner.addExcludeFilter(new AssignableTypeFilter(ConfigurationRefresher.class));
-    return scanner;
+        bootstrap.scan(scanRoots);
   }
 
   private XmlBeanDefinitionReader createXmlLoader() {
@@ -204,13 +197,13 @@ public class SpringIsolatedTestManifest
 
   @Override
   public void configure() {
-    context.getBean(ConfigurationSystem.class).configure();
+    context.getBean(StickyBootstrap.class).start();
   }
 
   @Override
   public void initialiseFramework(List<String> frameworkPackages) {
-    ClassPathBeanDefinitionScanner scanner = createScanner();
-    scanner.scan(frameworkPackages.toArray(new String[0]));
+    new StickySpringBootstrap(context)
+    .scan(frameworkPackages.toArray(new String[frameworkPackages.size()]));
   }
 
 }
