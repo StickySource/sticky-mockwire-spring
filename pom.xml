@@ -10,7 +10,7 @@
 
 	<groupId>net.stickycode.mockwire</groupId>
 	<artifactId>sticky-mockwire-spring3</artifactId>
-	<version>8.2-SNAPSHOT</version>
+	<version>8.3-SNAPSHOT</version>
 
 	<name>sticky-mockwire-spring3-8</name>
 	<description>Implementation of mockwire context management using Spring 3.0 as the di container</description>
@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>net.stickycode.mockwire</groupId>
 			<artifactId>sticky-mockwire-tck</artifactId>
-			<version>[8.1,9)</version>
+			<version>[8.2,9)</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -40,12 +40,12 @@
 		<dependency>
 			<groupId>net.stickycode.mockwire</groupId>
 			<artifactId>sticky-mockwire</artifactId>
-			<version>[8.1,9)</version>
+			<version>[8.2,9)</version>
 		</dependency>
 		<dependency>
 			<groupId>net.stickycode.configured</groupId>
 			<artifactId>sticky-configured-spring3</artifactId>
-			<version>[5.2,10)</version>
+			<version>[5.5,10)</version>
 		</dependency>
 		<dependency>
 			<groupId>net.stickycode</groupId>
