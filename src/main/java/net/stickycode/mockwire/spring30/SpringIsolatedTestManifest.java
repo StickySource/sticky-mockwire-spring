@@ -19,14 +19,10 @@ import java.util.Map;
 import net.stickycode.bootstrap.StickyBootstrap;
 import net.stickycode.bootstrap.spring3.StickySpringBootstrap;
 import net.stickycode.configuration.ConfigurationSource;
-import net.stickycode.configured.ConfigurationSystem;
-import net.stickycode.configured.spring30.ConfigurationRefresher;
 import net.stickycode.exception.PermanentException;
 import net.stickycode.mockwire.IsolatedTestManifest;
 import net.stickycode.mockwire.MissingBeanException;
 import net.stickycode.mockwire.NonUniqueBeanException;
-import net.stickycode.stereotype.StickyComponent;
-import net.stickycode.stereotype.StickyPlugin;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,11 +33,8 @@ import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.GenericBeanDefinition;
 import org.springframework.beans.factory.xml.ResourceEntityResolver;
 import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
-import org.springframework.context.annotation.ClassPathBeanDefinitionScanner;
 import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
 import org.springframework.context.support.GenericApplicationContext;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
-import org.springframework.core.type.filter.AssignableTypeFilter;
 
 public class SpringIsolatedTestManifest
     implements IsolatedTestManifest {
