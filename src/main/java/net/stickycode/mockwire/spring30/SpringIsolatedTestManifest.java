@@ -50,11 +50,11 @@ public class SpringIsolatedTestManifest
 
     MockwireFieldInjectingBeanPostProcessor blessInjector = new MockwireFieldInjectingBeanPostProcessor(new SpringValueSource(context));
     context.getBeanFactory().addBeanPostProcessor(blessInjector);
-    
+
     AutowiredAnnotationBeanPostProcessor inject = new AutowiredAnnotationBeanPostProcessor();
     inject.setBeanFactory(context.getDefaultListableBeanFactory());
     context.getBeanFactory().addBeanPostProcessor(inject);
-    
+
     CommonAnnotationBeanPostProcessor commonPostProcessor = new CommonAnnotationBeanPostProcessor();
     commonPostProcessor.setBeanFactory(context.getDefaultListableBeanFactory());
     context.getBeanFactory().addBeanPostProcessor(commonPostProcessor);
@@ -72,6 +72,7 @@ public class SpringIsolatedTestManifest
   @Override
   public void prepareTest(Object testInstance) {
     refresh(testInstance.getClass());
+    context.getBean(StickyBootstrap.class).start();
     try {
       context.getAutowireCapableBeanFactory().autowireBean(testInstance);
     }
@@ -190,7 +191,6 @@ public class SpringIsolatedTestManifest
 
   @Override
   public void configure() {
-    context.getBean(StickyBootstrap.class).start();
   }
 
   @Override
