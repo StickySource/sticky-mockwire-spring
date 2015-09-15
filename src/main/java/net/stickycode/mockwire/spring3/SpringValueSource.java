@@ -1,4 +1,4 @@
-package net.stickycode.mockwire.spring30;
+package net.stickycode.mockwire.spring3;
 
 import org.springframework.context.support.GenericApplicationContext;
 

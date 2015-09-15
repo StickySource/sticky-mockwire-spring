@@ -10,45 +10,43 @@
  * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the Apache License Version 2.0 for the specific language governing permissions and limitations there under.
  */
-package net.stickycode.mockwire.spring30;
+package net.stickycode.mockwire.spring3;
 
 import java.beans.Introspector;
 import java.util.List;
-import java.util.Map;
-
-import net.stickycode.bootstrap.StickyBootstrap;
-import net.stickycode.bootstrap.spring3.StickySpringBootstrap;
-import net.stickycode.configuration.ConfigurationSource;
-import net.stickycode.exception.PermanentException;
-import net.stickycode.mockwire.IsolatedTestManifest;
-import net.stickycode.mockwire.MissingBeanException;
-import net.stickycode.mockwire.NonUniqueBeanException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
-import org.springframework.beans.factory.support.AbstractBeanDefinition;
-import org.springframework.beans.factory.support.GenericBeanDefinition;
-import org.springframework.beans.factory.xml.ResourceEntityResolver;
-import org.springframework.beans.factory.xml.XmlBeanDefinitionReader;
 import org.springframework.context.annotation.CommonAnnotationBeanPostProcessor;
 import org.springframework.context.support.GenericApplicationContext;
+import org.springframework.context.support.SimpleThreadScope;
+
+import net.stickycode.bootstrap.StickyBootstrap;
+import net.stickycode.bootstrap.StickySystemStartup;
+import net.stickycode.configuration.ConfigurationSource;
+import net.stickycode.exception.PermanentException;
+import net.stickycode.mockwire.IsolatedTestManifest;
+import net.stickycode.mockwire.MissingBeanException;
 
 public class SpringIsolatedTestManifest
     implements IsolatedTestManifest {
 
-  private GenericApplicationContext context;
+  private StickyBootstrap bootstrap;
 
   private Logger log = LoggerFactory.getLogger(getClass());
 
   public SpringIsolatedTestManifest() {
     super();
 
-    context = new GenericApplicationContext();
+    bootstrap = StickyBootstrap.crank();
 
-    MockwireFieldInjectingBeanPostProcessor blessInjector = new MockwireFieldInjectingBeanPostProcessor(new SpringValueSource(context));
+    GenericApplicationContext context = (GenericApplicationContext) bootstrap.getImplementation();
+
+    MockwireFieldInjectingBeanPostProcessor blessInjector = new MockwireFieldInjectingBeanPostProcessor(
+        new SpringValueSource(context));
     context.getBeanFactory().addBeanPostProcessor(blessInjector);
 
     AutowiredAnnotationBeanPostProcessor inject = new AutowiredAnnotationBeanPostProcessor();
@@ -65,16 +63,15 @@ public class SpringIsolatedTestManifest
   }
 
   @Override
-  public boolean hasRegisteredType(Class<?> type) {
-    return context.getBeanNamesForType(type).length > 0;
+  public boolean canFind(Class<?> type) {
+    return bootstrap.canFind(type);
   }
 
   @Override
-  public void prepareTest(Object testInstance) {
+  public void beforeTest(Object testInstance) {
     refresh(testInstance.getClass());
-    context.getBean(StickyBootstrap.class).start();
     try {
-      context.getAutowireCapableBeanFactory().autowireBean(testInstance);
+      bootstrap.inject(testInstance);
     }
     catch (BeansException e) {
       Throwable cause = e.getMostSpecificCause();
@@ -91,63 +88,45 @@ public class SpringIsolatedTestManifest
 
   @Override
   public void registerBean(String beanName, Object bean, Class<?> type) {
-    log.debug("registering bean '{}' of type '{}'", beanName, type.getName());
-    context.getBeanFactory().initializeBean(bean, beanName);
-    context.getBeanFactory().registerSingleton(beanName, bean);
-    // beans that get pushed straight into the context need to be attached to destructive bean post processors
-    context.getDefaultListableBeanFactory().registerDisposableBean(
-        beanName, new DisposableBeanAdapter(bean, beanName, context));
+    bootstrap.registerSingleton(beanName, bean, type);
   }
 
   @Override
   public void registerType(String beanName, Class<?> type) {
-    log.debug("registering definition '{}' for type '{}'", beanName, type.getName());
-    GenericBeanDefinition bd = new GenericBeanDefinition();
-    bd.setBeanClass(type);
-    bd.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
-    context.getDefaultListableBeanFactory().registerBeanDefinition(beanName, bd);
+    bootstrap.registerType(beanName, type);
   }
 
   @Override
   @SuppressWarnings("unchecked")
   public <T> T getBeanOfType(Class<T> type) {
-    Map<String, ?> beans = context.getBeansOfType(type);
-    if (beans.size() == 1)
-      return (T) beans.values().iterator().next();
-
-    if (beans.size() == 0)
-      throw new MissingBeanException(type);
-
-    throw new NonUniqueBeanException(beans.size(), beans.keySet(), type);
+    return bootstrap.find(type);
   }
 
   @Override
   public void scanPackages(String[] scanRoots) {
     log.debug("scanning roots {}", scanRoots);
-    StickySpringBootstrap bootstrap = new StickySpringBootstrap(context);
-    XmlBeanDefinitionReader beanDefinitionReader = createXmlLoader();
-    for (String s : scanRoots)
-      if (s.endsWith(".xml"))
-        beanDefinitionReader.loadBeanDefinitions(s);
-      else
-        bootstrap.scan(scanRoots);
+    bootstrap.scan(scanRoots);
   }
 
-  private XmlBeanDefinitionReader createXmlLoader() {
-    XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(context);
-    beanDefinitionReader.setResourceLoader(context);
-    beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(context));
-    return beanDefinitionReader;
-  }
+//  private XmlBeanDefinitionReader createXmlLoader() {
+//    XmlBeanDefinitionReader beanDefinitionReader = new XmlBeanDefinitionReader(context);
+//    beanDefinitionReader.setResourceLoader(context);
+//    beanDefinitionReader.setEntityResolver(new ResourceEntityResolver(context));
+//    return beanDefinitionReader;
+//  }
 
   @Override
   public void startup(Class<?> testClass) {
-//    refresh(testClass);
+    refresh(testClass);
   }
 
   private void refresh(Class<?> testClass) {
     try {
-      context.refresh();
+      GenericApplicationContext context = getContext();
+      context.getBeanFactory().registerScope("request", new SimpleThreadScope());
+//      context.refresh();
+      if (context.getBeanNamesForType(StickySystemStartup.class).length > 0)
+        context.getBean(StickySystemStartup.class).start();
     }
     catch (BeansException e) {
       Throwable cause = e.getMostSpecificCause();
@@ -164,11 +143,11 @@ public class SpringIsolatedTestManifest
 
   @Override
   public void shutdown() {
-    context.close();
+    bootstrap.shutdown();
   }
 
   GenericApplicationContext getContext() {
-    return context;
+    return (GenericApplicationContext) bootstrap.getImplementation();
   }
 
   @Override
@@ -176,13 +155,6 @@ public class SpringIsolatedTestManifest
     for (ConfigurationSource configurationSource : configurationSources) {
       registerBean(name(configurationSource.getClass()), configurationSource, ConfigurationSource.class);
     }
-  }
-
-  public void registerType(GenericApplicationContext c, Class<?> type) {
-    GenericBeanDefinition bd = new GenericBeanDefinition();
-    bd.setBeanClass(type);
-    bd.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);
-    c.getDefaultListableBeanFactory().registerBeanDefinition(name(type), bd);
   }
 
   private String name(Class<?> type) {
@@ -195,8 +167,7 @@ public class SpringIsolatedTestManifest
 
   @Override
   public void initialiseFramework(List<String> frameworkPackages) {
-    new StickySpringBootstrap(context)
-    .scan(frameworkPackages.toArray(new String[frameworkPackages.size()]));
+    bootstrap.scan(frameworkPackages.toArray(new String[frameworkPackages.size()]));
   }
 
 }

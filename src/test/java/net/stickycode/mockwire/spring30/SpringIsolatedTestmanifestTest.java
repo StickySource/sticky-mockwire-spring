@@ -17,7 +17,9 @@ import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanFactoryPostProcessor;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 
-import static org.fest.assertions.Assertions.assertThat;
+import net.stickycode.mockwire.spring3.SpringIsolatedTestManifest;
+
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class SpringIsolatedTestmanifestTest {
 
@@ -53,6 +55,6 @@ public class SpringIsolatedTestmanifestTest {
       }
     });
     manifest.registerBean("bob", new Example(), Example.class);
-    manifest.prepareTest(this);
+    manifest.beforeTest(this);
   }
 }

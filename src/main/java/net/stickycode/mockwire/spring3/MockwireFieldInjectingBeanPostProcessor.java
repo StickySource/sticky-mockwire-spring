@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package net.stickycode.mockwire.spring30;
+package net.stickycode.mockwire.spring3;
 
 import net.stickycode.mockwire.MockwireInjectingFieldProcessor;
 import net.stickycode.reflector.Reflector;
