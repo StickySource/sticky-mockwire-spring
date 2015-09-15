@@ -10,7 +10,7 @@
 	</appender>
 
 	<logger name="net.stickycode" level="debug" />
-	<logger name="org.springframework" level="warn" />
+	<logger name="org.springframework" level="debug" />
 
 	<root level="info">
 		<appender-ref ref="CONSOLE" />
