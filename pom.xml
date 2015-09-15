@@ -10,7 +10,7 @@
 
 	<groupId>net.stickycode.mockwire</groupId>
 	<artifactId>sticky-mockwire-spring3</artifactId>
-	<version>9.1-SNAPSHOT</version>
+	<version>9.2-SNAPSHOT</version>
 
 	<name>sticky-mockwire-spring3-9</name>
 	<description>Implementation of mockwire context management using Spring 3.0 as the di container</description>
@@ -27,35 +27,35 @@
 		<dependency>
 			<groupId>net.stickycode.mockwire</groupId>
 			<artifactId>sticky-mockwire-tck</artifactId>
-			<version>[9,10)</version>
+			<version>[9.1,10)</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>net.stickycode.mockwire</groupId>
 			<artifactId>sticky-mockwire-mockito</artifactId>
-			<version>[6,7)</version>
+			<version>[6.1,7)</version>
 			<scope>test</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>net.stickycode.mockwire</groupId>
 			<artifactId>sticky-mockwire</artifactId>
-			<version>[9,10)</version>
+			<version>[9.1,10)</version>
 		</dependency>
 		<dependency>
 			<groupId>net.stickycode.configured</groupId>
 			<artifactId>sticky-configured-spring3</artifactId>
-			<version>[5,6)</version>
+			<version>[5.9,6)</version>
 		</dependency>
 		<dependency>
 			<groupId>net.stickycode</groupId>
 			<artifactId>sticky-metadata-reflective</artifactId>
-			<version>[3,4)</version>
+			<version>[3.2,4)</version>
 		</dependency>
 		<dependency>
 			<groupId>net.stickycode.composite</groupId>
 			<artifactId>sticky-composite-logging-deploy</artifactId>
-			<version>[3,4)</version>
+			<version>[3.1,4)</version>
 		</dependency>
 	</dependencies>
 </project>
