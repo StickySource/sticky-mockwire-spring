@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>net.stickycode.mockwire</groupId>
 			<artifactId>sticky-mockwire-mockito</artifactId>
-			<version>[6.1,7)</version>
+			<version>[7,8)</version>
 			<scope>test</scope>
 		</dependency>
 
