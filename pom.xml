@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Copyright (c) 2010 RedEngine Ltd, http://www.redengine.co.nz. All rights reserved. -->
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd" xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <parent>
     <groupId>net.stickycode.parent</groupId>
     <artifactId>sticky-parent-jar8</artifactId>
@@ -10,7 +10,7 @@
 
   <groupId>net.stickycode.mockwire</groupId>
   <artifactId>sticky-mockwire-spring</artifactId>
-  <version>5.1-SNAPSHOT</version>
+  <version>5.1</version>
 
   <name>sticky-mockwire-spring</name>
   <description>Implementation of mockwire context management using Spring as the di container</description>
@@ -21,7 +21,7 @@
   <scm>
     <connection>${git.url}</connection>
     <developerConnection>${git.url}</developerConnection>
-    <tag>HEAD</tag>
+    <tag>sticky-mockwire-spring-5.1</tag>
   </scm>
 
   <dependencies>
