@@ -28,13 +28,13 @@
     <dependency>
       <groupId>net.stickycode.mockwire</groupId>
       <artifactId>sticky-mockwire-tck</artifactId>
-      <version>[9.3,10)</version>
+      <version>[10,11)</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>net.stickycode.mockwire</groupId>
       <artifactId>sticky-mockwire-mockito</artifactId>
-      <version>[7.1,8)</version>
+      <version>[8,9)</version>
       <scope>test</scope>
     </dependency>
 
